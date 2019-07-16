@@ -8,10 +8,10 @@ import ee
 import urllib
 import zipfile
 import numpy as np
-
 ee.Initialize()
 
 def convert_to_yearly(image_collection, start_end, reducer = ee.Reducer.sum()):
+
     
     band_name = ee.Image(image_collection.first()).bandNames().getInfo()[0]
     
@@ -34,7 +34,7 @@ def convert_to_yearly(image_collection, start_end, reducer = ee.Reducer.sum()):
     return VARyearly
     
 def downloadImage(image, output_fh, shape, scale):
-
+    
     region = ee.Geometry(shape.geometry().bounds(1).getInfo()).toGeoJSONString()
     
     params = {
@@ -46,15 +46,15 @@ def downloadImage(image, output_fh, shape, scale):
     
     url = image.getDownloadURL(params)
 
-    succes = True
-    while succes:
+    succes = False
+    while not succes:
         try:
-            print "start download"
+            print("start download")
             urllib.urlretrieve(url, output_fh)
             zip_ref = zipfile.ZipFile(output_fh, 'r')
             zip_ref.extractall(output_fh[:-4])
             zip_ref.close()
-            succes = False
+            succes = True
         except:
             pass
         
